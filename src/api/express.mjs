@@ -23,9 +23,24 @@ export async function apiMain() {
         console.log("API running on port " + config.api.general.port);
     });
 
+    api.get('/queue', async (req, res) => {
+        if (!sentToken) {
+            res.status(401);
+            res.json({ error: "Access denied. No token provided." });
+            return;
+        } else if (sentToken != config.api.import.authentication.token) {
+            res.status(403);
+            res.json({ error: "Invalid token." });
+            return;
+        };
+
+        res.status(200);
+        res.json({ queue });
+    });
+
     api.get('/import', async (req, res) => {
         res.status(200);
-        res.json({ queueLength: queue, eta: `~${Math.round(callback.queueLength / 60)} Minutes` });
+        res.json({ queueLength: queue.length, eta: `~${Math.round(queue.length / 60)} Minutes` });
     });
 
     api.post('/import', async (req, res) => {
