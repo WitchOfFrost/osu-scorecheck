@@ -165,7 +165,7 @@ export async function validateScores(path) {
                 }
             });
         };
-        callback.queueLength == queue.length;
+        callback.queueLength = queue.length;
         resolve(callback);
         fileWorker.deleteFile(path);
     });
