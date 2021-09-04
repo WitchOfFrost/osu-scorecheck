@@ -5,8 +5,7 @@ const pgLocal = new pgc({
     user: config.postgres.local.user,
     host: config.postgres.local.host,
     database: config.postgres.local.database,
-    password: config.postgres.local.authentication.password,
-    port: config.postgres.local.port,
+    port: config.postgres.local.port
 });
 pgLocal.connect();
 
@@ -14,7 +13,6 @@ const pgRemote = new pgc({
     user: config.postgres.remote.user,
     host: config.postgres.remote.host,
     database: config.postgres.remote.database,
-    password: config.postgres.remote.authentication.password,
     port: config.postgres.remote.port
 });
 pgRemote.connect();
