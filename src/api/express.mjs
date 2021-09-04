@@ -23,6 +23,11 @@ export async function apiMain() {
         console.log("API running on port " + config.api.general.port);
     });
 
+    api.get('/import', async (req, res) => {
+        res.status(200);
+        res.json({ queueLength: queue, eta: `~${Math.round(callback.queueLength / 60)} Minutes` });
+    });
+
     api.post('/import', async (req, res) => {
         if (config.api.import.enabled == false) {
             res.status(423);
@@ -66,7 +71,7 @@ export async function apiMain() {
                 let callback = await validateScores(path);
                 res.status(200);
                 res.json({
-                    message: "Successfully uploaded", totalProcessed: callback.totalProcessed, updatedScores: callback.updatedScores, missingScores: callback.missingScores, duplicateScores: callback.duplicateScores, queueLength: callback.queueLength, eta: `~${Math.round(callback.queueLength / 60)} Minutes `
+                    message: "Successfully uploaded", totalProcessed: callback.totalProcessed, updatedScores: callback.updatedScores, missingScores: callback.missingScores, duplicateScores: callback.duplicateScores, queueLength: callback.queueLength, eta: `~${Math.round(callback.queueLength / 60)} Minutes`
                 });
             };
         }
