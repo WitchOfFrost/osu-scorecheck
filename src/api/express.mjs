@@ -24,6 +24,8 @@ export async function apiMain() {
     });
 
     api.get('/queue', async (req, res) => {
+        let sentToken = req.headers["x-access-token"] || req.headers["authorization"];
+
         if (!sentToken) {
             res.status(401);
             res.json({ error: "Access denied. No token provided." });
