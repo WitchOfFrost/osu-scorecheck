@@ -11,7 +11,6 @@ let token;
 let refresh = 0;
 
 setInterval(processQueue, 1000);
-setInterval(importQueueLengthConsoleLog, 1000 * 60);
 apiMain();
 
 async function refreshToken() {
@@ -93,10 +92,6 @@ async function calcModEnum(mods) {
         resolve(calc);
     });
 };
-
-function importQueueLengthConsoleLog() {
-    console.log("Current Import Queue Length: " + queue.length);
-}
 
 async function processQueue() {
     if (queue.length > 0) {
