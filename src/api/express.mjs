@@ -67,7 +67,7 @@ export async function apiMain() {
                 };
             };
 
-            if (!req.files) {
+            if (!req.files.csv) {
                 res.status(400);
                 res.json({ error: "No file uploaded." });
                 return;
