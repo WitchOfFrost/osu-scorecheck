@@ -86,10 +86,15 @@ export async function apiMain() {
                 await file.mv(`./api/cache/${fileName}.${fileExt}`);
 
                 let callback = await validateScores(path);
-                res.status(200);
-                res.json({
-                    message: "Successfully uploaded", totalProcessed: callback.totalProcessed, updatedScores: callback.updatedScores, missingScores: callback.missingScores, duplicateScores: callback.duplicateScores, queueLength: callback.queueLength, eta: `~${Math.round(callback.queueLength / 60)} Minutes`
-                });
+                if (callback.staus != undefined) {
+                    res.status(500);
+                    res.json({ error: "Something went wrong." });
+                } else {
+                    res.status(200);
+                    res.json({
+                        message: "Successfully uploaded", totalProcessed: callback.totalProcessed, updatedScores: callback.updatedScores, missingScores: callback.missingScores, duplicateScores: callback.duplicateScores, errors: callback.errors, queueLength: callback.queueLength, eta: `~${Math.round(callback.queueLength / 60)} Minutes`
+                    });
+                }
             };
         }
     });

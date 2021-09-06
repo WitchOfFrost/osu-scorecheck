@@ -130,7 +130,7 @@ export async function validateScores(path) {
 
         let parsedCSV = await fileWorker.parseCSV(path);
         let totalProcessed = parsedCSV.length;
-        let callback = { totalProcessed: totalProcessed, updatedScores: 0, missingScores: 0, duplicateScores: 0, queueLength: 0 };
+        let callback = { totalProcessed: totalProcessed, updatedScores: 0, missingScores: 0, duplicateScores: 0, queueLength: 0, errors: 0 };
 
         console.log("Recieved CSV with length " + totalProcessed + ", checking with scoredb");
 
@@ -140,6 +140,9 @@ export async function validateScores(path) {
                     if (score.score_id > data.rows[0].score_id) {
                         queue.push(score);
                         await dbWorker.query("local", `UPDATE scoreid SET score_id=$1 WHERE user_id=$2 AND beatmap_id=$3`, [score.score_id, score.user_id, score.beatmap_id]).then(data => {
+                        }).catch(err => {
+                            console.log(err);
+                            callback.errors++
                         });
                         callback.updatedScores++;
                     } else {
@@ -148,6 +151,9 @@ export async function validateScores(path) {
                 } else {
                     queue.push(score);
                     await dbWorker.query("local", `INSERT INTO scoreid (score_id, user_id, beatmap_id) VALUES ($1, $2, $3)`, [score.score_id, score.user_id, score.beatmap_id]).then(data => {
+                    }).catch(err => {
+                        console.log(err);
+                        callback.errors++
                     });
                     callback.missingScores++;
                 }
