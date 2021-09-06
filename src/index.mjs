@@ -169,6 +169,8 @@ export async function validateScores(path) {
         callback.queueLength = queue.length;
         recentUploadStats.push(callback);
 
+        console.log(callback);
+
         if (recentUploadStats.length > 10) {
             recentUploadStats.shift();
         };
