@@ -134,6 +134,11 @@ export async function validateScores(path) {
 
         console.log("Recieved CSV with length " + totalProcessed + ", checking with scoredb");
 
+        if (parsedCSV.length > 10000) {
+            callback = { status: "processing" }
+            resolve(callback)
+        };
+
         for (const score of parsedCSV) {
             if (score.user_id == null || score.beatmap_id == null || score.score_id == null) {
                 callback.errors++
