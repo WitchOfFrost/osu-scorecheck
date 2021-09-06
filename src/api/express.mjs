@@ -86,18 +86,13 @@ export async function apiMain() {
                 await file.mv(`./api/cache/${fileName}.${fileExt}`);
 
                 let callback = await validateScores(path);
-                if (callback.staus == "error") {
+                if (callback.staus != undefined) {
                     res.status(500);
                     res.json({ error: "Something went wrong." });
-                } else if (callback.status == "processing") {
-                    res.status(200);
-                    res.json({
-                        message: "Successfully uploaded, but file is massive. Running processing in background."
-                    });
                 } else {
                     res.status(200);
                     res.json({
-                        message: "Successfully uploaded", totalProcessed: callback.totalProcessed, updatedScores: callback.updatedScores, missingScores: callback.missingScores, duplicateScores: callback.duplicateScores, errors: callback.errors, queueLength: callback.queueLength, eta: `~${Math.round(callback.queueLength / 60)} Minutes`
+                        message: "Successfully uploaded", totalProcessed: callback.totalProcessed, queueLength: callback.queueLength, eta: `~${Math.round(callback.queueLength / 60)} Minutes`
                     });
                 }
             };

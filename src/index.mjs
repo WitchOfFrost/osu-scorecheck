@@ -134,10 +134,7 @@ export async function validateScores(path) {
 
         console.log("Recieved CSV with length " + totalProcessed + ", checking with scoredb");
 
-        if (parsedCSV.length > 10000) {
-            callback = { status: "processing" }
-            resolve(callback)
-        };
+        resolve({ totalProcessed: totalProcessed, queueLength: queue.length });
 
         for (const score of parsedCSV) {
             if (score.user_id == null || score.beatmap_id == null || score.score_id == null) {
@@ -170,7 +167,6 @@ export async function validateScores(path) {
         };
         callback.queueLength = queue.length;
         console.log(callback);
-        resolve(callback);
         fileWorker.deleteFile(path);
     });
 };
