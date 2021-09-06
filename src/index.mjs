@@ -137,32 +137,31 @@ export async function validateScores(path) {
         for (const score of parsedCSV) {
             if (score.user_id == null || score.beatmap_id == null || score.score_id == null) {
                 callback.errors++
-                return;
-            }
-
-            await dbWorker.query("local", `SELECT * FROM scoreid WHERE user_id=$1 AND beatmap_id=$2 LIMIT 1`, [score.user_id, score.beatmap_id]).then(async data => {
-                if (data.rows[0] != undefined) {
-                    if (score.score_id > data.rows[0].score_id) {
+            } else {
+                await dbWorker.query("local", `SELECT * FROM scoreid WHERE user_id=$1 AND beatmap_id=$2 LIMIT 1`, [score.user_id, score.beatmap_id]).then(async data => {
+                    if (data.rows[0] != undefined) {
+                        if (score.score_id > data.rows[0].score_id) {
+                            queue.push(score);
+                            await dbWorker.query("local", `UPDATE scoreid SET score_id=$1 WHERE user_id=$2 AND beatmap_id=$3`, [score.score_id, score.user_id, score.beatmap_id]).then(data => {
+                            }).catch(err => {
+                                console.log(err);
+                                callback.errors++
+                            });
+                            callback.updatedScores++;
+                        } else {
+                            callback.duplicateScores++;
+                        }
+                    } else {
                         queue.push(score);
-                        await dbWorker.query("local", `UPDATE scoreid SET score_id=$1 WHERE user_id=$2 AND beatmap_id=$3`, [score.score_id, score.user_id, score.beatmap_id]).then(data => {
+                        await dbWorker.query("local", `INSERT INTO scoreid (score_id, user_id, beatmap_id) VALUES ($1, $2, $3)`, [score.score_id, score.user_id, score.beatmap_id]).then(data => {
                         }).catch(err => {
                             console.log(err);
                             callback.errors++
                         });
-                        callback.updatedScores++;
-                    } else {
-                        callback.duplicateScores++;
+                        callback.missingScores++;
                     }
-                } else {
-                    queue.push(score);
-                    await dbWorker.query("local", `INSERT INTO scoreid (score_id, user_id, beatmap_id) VALUES ($1, $2, $3)`, [score.score_id, score.user_id, score.beatmap_id]).then(data => {
-                    }).catch(err => {
-                        console.log(err);
-                        callback.errors++
-                    });
-                    callback.missingScores++;
-                }
-            });
+                });
+            };
         };
         callback.queueLength = queue.length;
         console.log(callback);
