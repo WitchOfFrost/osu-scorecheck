@@ -135,6 +135,11 @@ export async function validateScores(path) {
         console.log("Recieved CSV with length " + totalProcessed + ", checking with scoredb");
 
         for (const score of parsedCSV) {
+            if (score.user_id == null || score.beatmap_id == null || score.score_id == null) {
+                callback.errors++
+                return;
+            }
+
             await dbWorker.query("local", `SELECT * FROM scoreid WHERE user_id=$1 AND beatmap_id=$2 LIMIT 1`, [score.user_id, score.beatmap_id]).then(async data => {
                 if (data.rows[0] != undefined) {
                     if (score.score_id > data.rows[0].score_id) {
