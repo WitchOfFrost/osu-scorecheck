@@ -69,7 +69,7 @@ export async function apiMain() {
 
             if (!req.files.csv) {
                 res.status(400);
-                res.json({ error: "No file uploaded." });
+                res.json({ error: "No file found. File needs to be uploaded as multipart/form-data with var name csv." });
                 return;
             } else {
                 let file = req.files.csv;
