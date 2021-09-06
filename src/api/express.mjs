@@ -5,7 +5,7 @@ import morgan from 'morgan';
 
 import { expressUploader } from "../workarounds/expressUpload.cjs";
 
-import { validateScores, queue } from '../index.mjs';
+import { validateScores, queue, recentUploadStats } from '../index.mjs';
 import { config } from '../workarounds/selfReloadJson.cjs';
 
 const api = express();
@@ -44,6 +44,12 @@ export async function apiMain() {
         res.status(200);
         res.json({ queueLength: queue.length, eta: `~${Math.round(queue.length / 60)} Minutes` });
     });
+
+    api.get('/stats', async (req, res) => {
+        res.status(200);
+        res.json(recentUploadStats);
+    });
+
 
     api.post('/import', async (req, res) => {
         if (config.api.import.enabled == false) {

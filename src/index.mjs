@@ -6,6 +6,7 @@ import { fileWorker } from './workers/file.mjs';
 import { dbWorker } from './workers/database.mjs';
 
 export let queue = []
+export let recentUploadStats = []
 
 let token;
 let refresh = 0;
@@ -166,7 +167,12 @@ export async function validateScores(path) {
             };
         };
         callback.queueLength = queue.length;
-        console.log(callback);
+        recentUploadStats.push(callback);
+
+        if (recentUploadStats.length > 10) {
+            recentUploadStats.shift();
+        };
+
         fileWorker.deleteFile(path);
     });
 };
