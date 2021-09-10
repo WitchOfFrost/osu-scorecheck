@@ -11,7 +11,7 @@ export let recentUploadStats = []
 let token;
 let refresh = 0;
 
-setInterval(processQueue, 1000);
+setInterval(processQueue, 500);
 apiMain();
 
 async function refreshToken() {

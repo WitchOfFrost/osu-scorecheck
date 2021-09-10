@@ -98,7 +98,7 @@ export async function apiMain() {
                 } else {
                     res.status(200);
                     res.json({
-                        message: "Successfully uploaded", totalProcessed: callback.totalProcessed, queueLength: callback.queueLength, eta: `~${Math.round(callback.queueLength / 60)} Minutes`
+                        message: "Successfully uploaded", totalProcessed: callback.totalProcessed, queueLength: callback.queueLength, eta: `~${Math.round(callback.queueLength / 120)} Minutes`
                     });
                 }
             };
